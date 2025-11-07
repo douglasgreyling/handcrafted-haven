@@ -76,5 +76,5 @@ The application provides a seamless experience for both sellers and buyers, emph
 6. **As a site visitor, I want a responsive website layout** so I can use it on both desktop and mobile devices.
 7. **As a user, I want accessible navigation** to ensure the platform is usable regardless of disability.
 8. **As a developer, I want a version-controlled GitHub repository** to manage code collaboratively.
-9. **As a project manager, I want tasks tracked in GitHub Boards** to monitor progress and assign responsibilities.
-10. **As a deployment engineer, I want the app deployed on Vercel** so it is accessible publicly and supports scalability.
+9. **As a team member, I want tasks tracked in GitHub Boards** to monitor progress and assign responsibilities.
+10. **As a developer, I want the app deployed on Vercel** so it is accessible publicly and supports scalability.
