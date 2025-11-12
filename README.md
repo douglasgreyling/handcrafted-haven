@@ -43,6 +43,10 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 The application provides a seamless experience for both sellers and buyers, emphasizing usability, accessibility, and customization while maintaining a secure e-commerce platform.
 
+## Project Kanban
+
+https://github.com/users/douglasgreyling/projects/1/views/1
+
 ## Project Goals
 
 1. **Develop Software Development Skills:** We need to build a full-stack web application collaboratively using modern technologies and deploy it to the cloud.
