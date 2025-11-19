@@ -1,7 +1,7 @@
-import Announcement  from "../components/announcement"
-import Footer from "../components/Footer"
-import Navigation from "../components/navigation"
-import ProductCard from "../components/ProductCard";
+import Announcement  from "../components/user/announcement"
+import Footer from "../components/user/Footer"
+import Navigation from "../components/user/navigation"
+import ProductCard from "../components/user/ProductCard";
 
 
 const Home = () => {

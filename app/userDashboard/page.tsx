@@ -1,8 +1,8 @@
 import React from 'react'
-import Announcement  from "../../components/announcement"
-import Navigation from '../../components/navigation'
-import Footer from '../../components/Footer'
-import ProductCard from '../../components/ProductCard'
+import Announcement  from "../../components/user/announcement"
+import Navigation from '../../components/user/navigation'
+import Footer from '../../components/user/Footer'
+import ProductCard from '../../components/user/ProductCard'
 
 const UserDashboard = () => {
   return (
