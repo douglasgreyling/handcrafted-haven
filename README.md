@@ -66,6 +66,11 @@ Once you've run the commend above you'll be able to access the application.
 
 Open your web browser and go to: **http://localhost:3000**
 
+You can login using the seeded user account:
+- **Username:** tester
+- **Email:** test@example.com
+- **Password:** foobarbazA1
+
 If at any point you need to stop the application, return to your terminal and press `CTRL + C`.
 
 ## Development Commands

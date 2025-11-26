@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client')
+const bcrypt = require('bcryptjs')
 
 const prisma = new PrismaClient()
 
@@ -116,6 +117,23 @@ async function main() {
   }
 
   console.log(`Seeded ${products.length} products`)
+
+  // Create test user
+  const hashedPassword = await bcrypt.hash('foobarbazA1', 10)
+
+  await prisma.user.deleteMany({
+    where: { email: 'test@example.com' }
+  })
+
+  await prisma.user.create({
+    data: {
+      username: 'tester',
+      email: 'test@example.com',
+      password: hashedPassword
+    }
+  })
+
+  console.log('Seeded test user (username: tester, email: test@example.com)')
 }
 
 main()
