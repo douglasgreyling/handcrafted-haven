@@ -3,13 +3,15 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ShoppingBasket, User, LogOut } from 'lucide-react'
+import { ShoppingBasket, User, LogOut, ShoppingCart } from 'lucide-react'
+import { useCart } from '../lib/CartContext'
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const { getCartItemCount, refreshCart } = useCart()
 
   useEffect(() => {
     checkAuth()
@@ -33,6 +35,7 @@ const Navigation = () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' })
       setUser(null)
+      await refreshCart() // Reset cart context after logout
       router.refresh()
       router.push('/')
     } catch (error) {
@@ -72,14 +75,14 @@ const Navigation = () => {
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
-              <button className="text-gray-600 hover:text-indigo-600 p-2 relative">
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5.5M7 13l2.5 5.5M17 18a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM9 18a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
-                </svg>
-                <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                  0
-                </span>
-              </button>
+              <Link href="/cart" className="text-gray-600 hover:text-indigo-600 p-2 relative">
+                <ShoppingCart className="h-5 w-5" />
+                {getCartItemCount() > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {getCartItemCount()}
+                  </span>
+                )}
+              </Link>
 
               {!loading && (
                 <>

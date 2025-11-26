@@ -14,15 +14,16 @@ datasource db {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   name        String
   description String?
-  priceCents  Int      // Store price in cents to avoid floating point issues
+  priceCents  Int        // Store price in cents to avoid floating point issues
   category    String?
   imageUrl    String?
-  inStock     Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  inStock     Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  cartItems   CartItem[]
 
   @@map("products")
 }
@@ -34,6 +35,33 @@ model User {
   password  String   // Stores bcrypt hashed password
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  carts     Cart[]
 
   @@map("users")
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  status    String     @default("active") // active or completed
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  cartId    Int
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, productId])
+  @@map("cart_items")
 }

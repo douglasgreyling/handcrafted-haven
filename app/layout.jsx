@@ -3,6 +3,7 @@ import "./globals.css";
 
 import Navigation from '../components/Navigation'
 import Footer from '../components/Footer'
+import Providers from '../components/Providers'
 
 const roboto = Roboto({ subsets: ["latin"], weight: ["400", "500", "700"] });
 const montserrat = Montserrat({ subsets: ["latin"], weight: ["600", "700"] });
@@ -21,13 +22,15 @@ export default function RootLayout({ children }) {
       <body
         className="min-h-screen font-sans flex flex-col"
       >
-        <Navigation />
+        <Providers>
+          <Navigation />
 
-        <main className="flex-1">
-          {children}
-        </main>
+          <main className="flex-1">
+            {children}
+          </main>
 
-        <Footer />
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

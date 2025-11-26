@@ -1,16 +1,42 @@
 'use client'
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Card, CardContent, CardFooter, CardHeader } from './ui/card'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { formatPrice } from '../lib/utils'
+import { useCart } from '../lib/CartContext'
+import { useRouter } from 'next/navigation'
 
-const ProductCard = ({ id, title, priceCents, imageUrl, category, description, inStock = true, onAddToCart }) => {
-  const handleAddToCart = () => {
-    if (onAddToCart) {
-      onAddToCart(id)
+const ProductCard = ({ id, title, priceCents, imageUrl, category, description, inStock = true }) => {
+  const { addToCart } = useCart()
+  const [adding, setAdding] = useState(false)
+  const router = useRouter()
+
+  const handleAddToCart = async (e) => {
+    e.stopPropagation()
+
+    try {
+      const response = await fetch('/api/auth/session')
+      const data = await response.json()
+
+      if (!data.authenticated) {
+        router.push('/auth')
+        return
+      }
+
+      setAdding(true)
+      const success = await addToCart(id, 1)
+
+      if (success) {
+        setTimeout(() => setAdding(false), 1000)
+      } else {
+        setAdding(false)
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error)
+      setAdding(false)
     }
   }
 
@@ -87,10 +113,10 @@ const ProductCard = ({ id, title, priceCents, imageUrl, category, description, i
           variant="cta"
           size="sm"
           onClick={handleAddToCart}
-          disabled={!inStock}
+          disabled={!inStock || adding}
           className="shrink-0"
         >
-          {inStock ? 'Add to Cart' : 'Sold Out'}
+          {adding ? 'Added!' : inStock ? 'Add to Cart' : 'Sold Out'}
         </Button>
       </CardFooter>
     </Card>
