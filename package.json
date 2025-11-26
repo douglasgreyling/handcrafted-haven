@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "prisma generate && npx prisma migrate dev && node prisma/seed.js && next dev",
+    "dev": "prisma generate && npx prisma migrate deploy && node prisma/seed.js && next dev",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "seed": "node prisma/seed.js",
-    "migrate": "npx prisma migrate dev"
+    "migrate": "npx prisma migrate dev",
+    "migrate:deploy": "npx prisma migrate deploy"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -18,6 +19,7 @@
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "@types/pg": "^8.15.6",
+    "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.554.0",
