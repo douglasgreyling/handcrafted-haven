@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
       className={`${roboto.className} bg-background text-dark antialiased`}
     >
       <body
-        className="min-h-screen font-sans"
+        className="min-h-screen font-sans flex flex-col"
       >
         <Navigation />
 
