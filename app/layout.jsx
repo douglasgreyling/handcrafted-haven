@@ -1,6 +1,6 @@
 import { Roboto, Montserrat } from 'next/font/google';
 import "./globals.css";
-
+import { Toaster } from 'sonner';
 import Navigation from '../components/Navigation'
 import Footer from '../components/Footer'
 import Providers from '../components/Providers'
@@ -26,6 +26,7 @@ export default function RootLayout({ children }) {
           <Navigation />
 
           <main className="flex-1">
+            <Toaster position="top-right" richColors />
             {children}
           </main>
 
