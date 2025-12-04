@@ -17,28 +17,34 @@ model Product {
   id          Int        @id @default(autoincrement())
   name        String
   description String?
-  priceCents  Int        // Store price in cents to avoid floating point issues
+  priceCents  Int
   category    String?
   imageUrl    String?
   inStock     Boolean    @default(true)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+
+  userId      Int
+  user        User       @relation(fields: [userId], references: [id])
+
   cartItems   CartItem[]
 
   @@map("products")
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
-  password  String   // Stores bcrypt hashed password
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  carts     Cart[]
 
-  @@map("users")
+model User {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  carts     Cart[]
+  products  Product[] 
 }
+
 
 model Cart {
   id        Int        @id @default(autoincrement())

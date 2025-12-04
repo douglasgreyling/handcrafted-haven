@@ -6,10 +6,10 @@ services:
       POSTGRES_DB: handcrafted_haven
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data   # <-- Persistent volume!
 
   app:
     build:
@@ -22,9 +22,8 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - .:/app
-      - /app/node_modules
-      - /app/.next
+      - .:/app                                   # <-- Your source code
+      - /app/node_modules                        # <-- Prevent host overwriting node_modules
     depends_on:
       - db
 

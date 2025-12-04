@@ -18,54 +18,40 @@ import {
 
 export default function ProductForm({ action, product }) {
   const initialState = { message: null, errors: {} };
-  const [state, formAction] = useActionState(action, initialState);
+
+  // Wrap the server action so useActionState calls it with (prevState, formData)
+  const [state, formAction] = useActionState(
+    async (prevState, formData) => {
+      const values = Object.fromEntries(formData.entries());
+      const parsed = productSchema.safeParse(values);
+
+      if (!parsed.success) {
+        return {
+          message: "Validation failed",
+          errors: parsed.error.flatten().fieldErrors,
+        };
+      }
+
+      return await action(formData);
+    },
+    initialState
+  );
+
   const router = useRouter();
 
   React.useEffect(() => {
-    // server error
     if (state?.message) {
       toast.error(state.message);
     }
 
-    // success
-    if (
-      !state?.message &&
-      Object.keys(state?.errors || {}).length === 0 &&
-      state !== initialState
-    ) {
+    if (!state?.message && Object.keys(state.errors || {}).length === 0 && state !== initialState) {
       toast.success("Updated successfully");
       router.push("/my-products");
     }
   }, [state]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.target);
-    const values = Object.fromEntries(formData.entries());
-
-    const parsed = productSchema.safeParse(values);
-
-    if (!parsed.success) {
-      const errors = {};
-      parsed.error.errors.forEach((err) => {
-        errors[err.path[0]] = err.message;
-      });
-
-      formAction({ errors, message: "Validation failed" });
-      return;
-    }
-
-    // success → run server action
-    formAction(formData);
-  };
-
   return (
-    <form
-      action={formAction}
-      onSubmit={handleSubmit}
-      className="space-y-6 bg-white p-6 rounded-xl shadow-sm border"
-    >
+    <form action={formAction} className="space-y-6 bg-white p-6 rounded-xl shadow-sm border">
       <h2 className="text-xl font-semibold flex items-center gap-2 mb-2">
         <Tag className="w-5 h-5 text-blue-600" />
         Product Details

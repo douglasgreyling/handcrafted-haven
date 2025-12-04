@@ -1,26 +1,42 @@
+'use server';
+
 import ProductForm from "../../../../components/edit-product";
-import { getProductById, updateProduct } from "../../../../lib/product-actions";
-import { notFound } from "next/navigation";
+import { getSession } from "../../../../lib/auth";
+import { notFound, redirect } from "next/navigation";
+import prisma from "../../../../lib/prisma";
+import { updateProduct } from "../../../../lib/product-actions";
 
 export default async function EditProductPage({ params }) {
-  const id = Number(params.id);
-  if (isNaN(id)) {
-    return <div className="p-6 text-center text-red-600">Invalid product ID</div>;
-  }
+  const session = await getSession();
+  if (!session) return redirect("/auth");
 
-  const product = await getProductById(id);
-  if (!product) {
-    return (
-      <div className="p-6 text-center text-red-600">
-        Product not found or could not be loaded.
-      </div>
-    );
-  }
+  const resolvedParams = await params;
+  const id = Number(resolvedParams?.id);
+  if (isNaN(id)) return notFound();
+
+  const product = await prisma.product.findUnique({ where: { id } });
+  if (!product) return notFound();
+
+
+  const productForForm = {
+    id: product.id,
+    name: product.name,
+    description: product.description || "",
+    price: (product.priceCents / 100).toFixed(2),
+    category: product.category || "",
+    imageUrl: product.imageUrl || "",
+    inStock: product.inStock,
+  };
+
+  const updateWithId = updateProduct.bind(null, id);
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-semibold mb-6">Edit Product</h1>
-      <ProductForm product={product} action={async (formData) => updateProduct(id, formData)} />
-    </div>
+    <main className="container mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto bg-white rounded-md p-6">
+        <h1 className="text-2xl font-bold mb-4">Edit Product</h1>
+
+        <ProductForm product={productForForm} action={updateWithId} />
+      </div>
+    </main>
   );
 }

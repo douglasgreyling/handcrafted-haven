@@ -105,27 +105,19 @@ const products = [
 async function main() {
   console.log('Starting seed...')
 
-  // Clear existing data
+  // Clear existing data - delete products first (they reference users via foreign key)
   await prisma.product.deleteMany({})
   console.log('Cleared existing products')
 
-  // Insert seed data
-  for (const product of products) {
-    await prisma.product.create({
-      data: product
-    })
-  }
-
-  console.log(`Seeded ${products.length} products`)
-
-  // Create test user
-  const hashedPassword = await bcrypt.hash('foobarbazA1', 10)
-
+  // Now safe to delete the user
   await prisma.user.deleteMany({
     where: { email: 'test@example.com' }
   })
 
-  await prisma.user.create({
+  // Create test user
+  const hashedPassword = await bcrypt.hash('foobarbazA1', 10)
+
+  const testUser = await prisma.user.create({
     data: {
       username: 'tester',
       email: 'test@example.com',
@@ -134,6 +126,18 @@ async function main() {
   })
 
   console.log('Seeded test user (username: tester, email: test@example.com)')
+
+  // Insert seed data
+  for (const product of products) {
+    await prisma.product.create({
+      data: {
+        ...product,
+        userId: testUser.id
+      }
+    })
+  }
+
+  console.log(`Seeded ${products.length} products`)
 }
 
 main()

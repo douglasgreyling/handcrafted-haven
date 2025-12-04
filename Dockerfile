@@ -1,6 +1,4 @@
-FROM node:25-alpine
-
-RUN apk add --no-cache libc6-compat
+FROM node:20-bullseye
 
 WORKDIR /app
 

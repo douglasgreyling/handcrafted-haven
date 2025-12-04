@@ -7,13 +7,8 @@ import { Suspense } from "react";
 
 export default async function MyProductsPage() {
   const session = await getSession();
+  if (!session) return redirect("/auth");
 
-  // Redirect if NOT logged in
-  if (!session) {
-    return redirect("/auth");
-  }
-
-  // Fetch all products (no filtering)
   const products = await prisma.product.findMany({
     orderBy: { createdAt: "desc" },
   });
