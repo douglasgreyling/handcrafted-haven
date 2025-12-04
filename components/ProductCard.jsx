@@ -40,8 +40,15 @@ const ProductCard = ({ id, title, priceCents, imageUrl, category, description, i
     }
   }
 
+  const handleCardClick = () => {
+    router.push(`/products/${id}`)
+  }
+
   return (
-    <Card className="group cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
+    <Card 
+      className="group cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
+      onClick={handleCardClick}
+    >
       <CardHeader className="p-0">
         <div className="relative aspect-square overflow-hidden rounded-t-lg bg-gray-100">
           {imageUrl ? (
