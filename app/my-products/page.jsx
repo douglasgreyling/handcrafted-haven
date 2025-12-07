@@ -3,7 +3,6 @@ import { getSession } from "../../lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import SellerProductCard from "../../components/SellerProductCard";
-import { Suspense } from "react";
 
 export default async function MyProductsPage() {
   const session = await getSession();
@@ -29,13 +28,11 @@ export default async function MyProductsPage() {
       {products.length === 0 ? (
         <p>No products found.</p>
       ) : (
-        <Suspense fallback={<p>Loading products...</p>}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => (
               <SellerProductCard key={product.id} product={product} />
             ))}
           </div>
-        </Suspense>
       )}
     </div>
   );

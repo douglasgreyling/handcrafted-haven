@@ -5,7 +5,7 @@ import { Pencil, Trash2 } from "lucide-react";
 
 export default function SellerProductCard({ product }) {
   return (
-    <div className="relative border p-4 rounded-lg shadow-sm bg-white flex flex-col gap-4">
+    <div className="relative border p-4 rounded-lg shadow-sm bg-white flex flex-col gap-4 group cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
 
       {/* Edit/Delete Icons */}
       <div className="absolute top-3 right-3 flex gap-3 z-10">
@@ -30,7 +30,7 @@ export default function SellerProductCard({ product }) {
           <img
             src={product.imageUrl}
             alt={product.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
           />
         ) : (
           <div className="text-gray-400 text-sm flex flex-col items-center">
@@ -54,7 +54,7 @@ export default function SellerProductCard({ product }) {
 
       {/* Product Info */}
       <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-semibold">{product.name}</h2>
+        <h2 className="text-lg font-semibold group-hover:text-indigo-600 transition-colors">{product.name}</h2>
         <p className="text-sm text-gray-500 font-medium">
           ${(product.priceCents / 100).toFixed(2)}
         </p>

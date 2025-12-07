@@ -2,10 +2,9 @@
 
 import React from "react";
 import { useActionState } from "react";
+import { ProductSchema } from "../lib/validation/productSchema";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { productSchema } from "../lib/validation/productSchema";
-
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
@@ -23,7 +22,7 @@ export default function ProductForm({ action, product }) {
   const [state, formAction] = useActionState(
     async (prevState, formData) => {
       const values = Object.fromEntries(formData.entries());
-      const parsed = productSchema.safeParse(values);
+      const parsed = ProductSchema.safeParse(values);
 
       if (!parsed.success) {
         return {
@@ -46,7 +45,9 @@ export default function ProductForm({ action, product }) {
 
     if (!state?.message && Object.keys(state.errors || {}).length === 0 && state !== initialState) {
       toast.success("Updated successfully");
-      router.push("/my-products");
+      // Wait 2 seconds before redirecting so user sees the toast
+      const timer = setTimeout(() => router.push("/my-products"), 2000);
+      return () => clearTimeout(timer);
     }
   }, [state]);
 
@@ -67,7 +68,6 @@ export default function ProductForm({ action, product }) {
           name="name"
           defaultValue={product?.name}
           placeholder="Amazing product"
-          required
         />
         {state.errors?.name && (
           <p className="text-sm text-red-500">{state.errors.name}</p>
@@ -106,7 +106,6 @@ export default function ProductForm({ action, product }) {
               ? (product.priceCents / 100).toFixed(2)
               : "")
           }
-          required
         />
         {state.errors?.price && (
           <p className="text-sm text-red-500">{state.errors.price}</p>
@@ -131,7 +130,10 @@ export default function ProductForm({ action, product }) {
 
       {/* DESCRIPTION */}
       <div>
-        <label className="block text-sm font-medium mb-1">Description</label>
+        <label className="text-sm font-medium flex items-center gap-2">
+            <FileText className="w-4 h-4 text-gray-500" />
+            Description
+        </label>
         <textarea name="description" rows={5} defaultValue={product?.description} className="w-full rounded-md border px-3 py-2" />
         {state.errors?.description && (
           <p className="text-sm text-red-500">

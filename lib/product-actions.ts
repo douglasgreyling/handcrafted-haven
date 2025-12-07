@@ -4,35 +4,53 @@ import prisma from "./prisma";
 import { getSession } from "./auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { ProductSchema } from "./validation/productSchema";
+
+export type State = {
+  errors?: Record<string, string[]>;
+  message?: string | null;
+};
 
 /* -----------------------------
    CREATE PRODUCT
 ------------------------------ */
-export async function createProduct(formData: FormData) {
+export async function createProduct(prevState: State, formData: FormData) {
   const session = await getSession();
-  if (!session) redirect("/auth");
+  if (!session) return { message: "You must be logged in." };
 
-  const name = String(formData.get("name") || "").trim();
-  const description = String(formData.get("description") || "").trim();
-  const priceStr = String(formData.get("price") || "0").trim();
-  const category = String(formData.get("category") || "").trim() || null;
-  const imageUrl = String(formData.get("imageUrl") || "").trim() || null;
+  const validated = ProductSchema.safeParse({
+    name: formData.get("name"),
+    description: formData.get("description"),
+    price: formData.get("price"),
+    category: formData.get("category"),
+    imageUrl: formData.get("imageUrl"),
+    inStock: formData.get("inStock"),
+  });
 
-  const priceCents = Math.round(Number(priceStr) * 100);
+  if (!validated.success) {
+    return {
+      errors: validated.error.flatten().fieldErrors,
+      message: "Missing fields. Failed to create product."
+    };
+  }
+
+  const { name, description, price, category, imageUrl, inStock } =
+    validated.data;
 
   await prisma.product.create({
     data: {
       name,
       description,
-      priceCents,
+      priceCents: price * 100,
       category,
-      imageUrl,
-      inStock: true,
-      userId: session.userId,
+      imageUrl: imageUrl || null,
+      inStock,
+      userEmail: session.email,
     },
   });
 
   revalidatePath("/my-products");
+  revalidatePath("/products");
   redirect("/my-products");
 }
 
@@ -66,41 +84,47 @@ async function getOwnedProduct(productId: number, userId: number) {
 /* -----------------------------
    UPDATE PRODUCT
 ------------------------------ */
-export async function updateProduct(id: string | number, formData: FormData) {
+export async function updateProduct(
+  id: number,
+  prevState: State,
+  formData: FormData
+) {
   const session = await getSession();
-  if (!session) redirect("/auth");
+  if (!session) return { message: "You must be logged in." };
 
-  const productId = typeof id === "string" ? Number(id) : id;
-  if (isNaN(productId)) throw new Error("Invalid product ID");
+  const validated = ProductSchema.safeParse({
+    name: formData.get("name"),
+    description: formData.get("description"),
+    price: formData.get("price"),
+    category: formData.get("category"),
+    imageUrl: formData.get("imageUrl"),
+    inStock: formData.get("inStock"),
+  });
 
-  await getOwnedProduct(productId, session.userId);
+  if (!validated.success) {
+    return {
+      errors: validated.error.flatten().fieldErrors,
+      message: "Missing fields. Failed to update product."
+    };
+  }
 
-  const getField = (fd, key) => {
-    if (!fd) return undefined;
-    if (typeof fd.get === "function") return fd.get(key);
-    return fd[key];
-  };
-
-  const name = String(getField(formData, "name") || "").trim();
-  const description = String(getField(formData, "description") || "").trim();
-  const priceStr = String(getField(formData, "price") || "0").trim();
-  const category = String(getField(formData, "category") || "").trim() || null;
-  const imageUrl = String(getField(formData, "imageUrl") || "").trim() || null;
-
-  const priceCents = Math.round(Number(priceStr) * 100);
+  const { name, description, price, category, imageUrl, inStock } =
+    validated.data;
 
   await prisma.product.update({
-    where: { id: productId },
+    where: { id },
     data: {
       name,
       description,
-      priceCents,
+      priceCents: price * 100,
       category,
-      imageUrl,
+      imageUrl: imageUrl || null,
+      inStock,
     },
   });
 
   revalidatePath("/my-products");
+  revalidatePath("/products");
   redirect("/my-products");
 }
 
@@ -122,5 +146,6 @@ export async function deleteProduct(id: string | number) {
   });
 
   revalidatePath("/my-products");
+  revalidatePath("/products");
   redirect("/my-products");
 }
