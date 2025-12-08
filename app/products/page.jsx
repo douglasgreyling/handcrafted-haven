@@ -267,7 +267,7 @@ export default function ProductsPage() {
               setSearchQuery('')
               setDebouncedSearchQuery('')
             }}>
-              "{debouncedSearchQuery}" ×
+              &quot;{debouncedSearchQuery}&quot; ×
             </Badge>
           )}
         </div>

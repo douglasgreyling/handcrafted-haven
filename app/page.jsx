@@ -1,5 +1,3 @@
-import Footer from "../components/Footer"
-import Navigation from "../components/Navigation"
 import ProductCard from "../components/ProductCard"
 import Link from 'next/link'
 
@@ -54,7 +52,7 @@ const Home = () => {
                   </svg>
                 </div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">Unique & Original</h3>
-                <p className="text-gray-600">Find one-of-a-kind pieces you won't see anywhere else, each with its own story and character.</p>
+                <p className="text-gray-600">Find one-of-a-kind pieces you won&apos;t see anywhere else, each with its own story and character.</p>
               </div>
 
               <div className="text-center">
