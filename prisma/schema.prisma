@@ -17,17 +17,22 @@ model Product {
   id          Int        @id @default(autoincrement())
   name        String
   description String?
-  priceCents  Int        // Store price in cents to avoid floating point issues
+  priceCents  Int
   category    String?
   imageUrl    String?
   inStock     Boolean    @default(true)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+
+  userId      Int
+  user        User       @relation(fields: [userId], references: [id])
+
   cartItems   CartItem[]
   reviews     Review[]
 
   @@map("products")
 }
+
 
 model User {
   id        Int      @id @default(autoincrement())
@@ -37,10 +42,12 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   carts     Cart[]
+  products  Product[]
   reviews   Review[]
 
   @@map("users")
 }
+
 
 model Cart {
   id        Int        @id @default(autoincrement())
