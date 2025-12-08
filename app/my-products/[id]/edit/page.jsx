@@ -1,10 +1,9 @@
-'use server';
-
-import ProductForm from "../../../../components/edit-product";
+import ProductForm from "../../../../components/EditProduct";
 import { getSession } from "../../../../lib/auth";
 import { notFound, redirect } from "next/navigation";
-import prisma from "../../../../lib/prisma";
-import { updateProduct } from "../../../../lib/product-actions";
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 export default async function EditProductPage({ params }) {
   const session = await getSession();
@@ -17,6 +16,7 @@ export default async function EditProductPage({ params }) {
   const product = await prisma.product.findUnique({ where: { id } });
   if (!product) return notFound();
 
+  if (product.userId !== session.userId) return notFound();
 
   const productForForm = {
     id: product.id,
@@ -28,14 +28,12 @@ export default async function EditProductPage({ params }) {
     inStock: product.inStock,
   };
 
-  const updateWithId = updateProduct.bind(null, id);
-
   return (
     <main className="container mx-auto px-4 py-8">
       <div className="max-w-3xl mx-auto bg-white rounded-md p-6">
         <h1 className="text-2xl font-bold mb-4">Edit Product</h1>
 
-        <ProductForm product={productForForm} action={updateWithId} />
+        <ProductForm product={productForForm} />
       </div>
     </main>
   );

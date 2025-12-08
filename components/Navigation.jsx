@@ -72,6 +72,14 @@ const Navigation = () => {
               >
                 Products
               </Link>
+              {user && (
+                <Link
+                  href="/my-products"
+                  className="text-gray-600 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors"
+                >
+                  My Products
+                </Link>
+              )}
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
@@ -146,6 +154,15 @@ const Navigation = () => {
               >
                 Products
               </Link>
+              {user && (
+                <Link
+                  href="/my-products"
+                  className="block text-gray-600 hover:text-indigo-600 px-3 py-2 text-base font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  My Products
+                </Link>
+              )}
               <div className="border-t border-gray-200 pt-2 mt-2">
                 {!loading && (
                   <>
